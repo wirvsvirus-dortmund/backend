@@ -1,6 +1,6 @@
 # Backend
 
-Backend for the job status service using flask and sqlalchemy
+Backend for the shop status and appointment service using flask and sqlalchemy
 
 
 ## Getting started
