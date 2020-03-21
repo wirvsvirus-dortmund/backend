@@ -12,7 +12,7 @@ You'll need python ≥ 3.6.
 
 1. Get poetry:
     ```
-    $ python install [--user] poetry
+    $ pip install [--user] poetry
     ```
 
 1. Copy the env-template and fill in the config
