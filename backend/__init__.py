@@ -22,6 +22,11 @@ def create_app(config=Config):
     login.init_app(app)
     Migrate(app, db)
 
+    def internal_error(error):
+        db.session.rollback()
+
+    app.register_error_handler(500, internal_error)
+
     # register blueprints
     app.register_blueprint(auth)
     app.register_blueprint(api.blueprint, url_prefix='/api')
