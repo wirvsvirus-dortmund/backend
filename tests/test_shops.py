@@ -9,7 +9,6 @@ def test_shops(app, client):
     ))
     db.session.commit()
 
-    assert Shop.query.count() == 1
     shop = Shop.query.first()
     assert shop.capacity == 50
     assert shop.name == 'My Awesome Supermarket'
