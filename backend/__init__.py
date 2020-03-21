@@ -20,6 +20,6 @@ def create_app(config=Config):
     
     # register blueprints
     app.register_blueprint(auth)
-    app.register_blueprint(api.blueprint)
+    app.register_blueprint(api.blueprint, url_prefix='/api')
 
     return app
