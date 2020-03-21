@@ -1,2 +1,5 @@
 export FLASK_APP="backend:create_app()"
 export DATABASE_URI="sqlite:///db.sqlite"
+
+# generate cryptographically secure random data, e.g. head -c 32 /dev/urandom | base64
+export SECRET_KEY="<key>"

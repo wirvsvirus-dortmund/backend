@@ -1,5 +1,5 @@
 from flask_login import LoginManager, login_user, logout_user
-from flask import jsonify, request, abort, redirect, url_for, flash, Blueprint
+from flask import jsonify, abort, redirect, url_for, flash, Blueprint
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -20,14 +20,10 @@ def load_user(id):
 
 @login.unauthorized_handler
 def handle_needs_login():
-    if 'application/json' in request.headers.get('Accept'):
-        return jsonify(status='access_denied'), 401
-
-    if request.headers.get('Authorization') is not None:
-        abort(401)
-
-    flash("You have to be logged in to access this page.", category='danger')
-    return redirect(url_for('main.login_page', next=request.full_path))
+    return jsonify(
+        status='access_denied',
+        message='You need to login to access this page'
+    ), 401
 
 
 class LoginForm(FlaskForm):
@@ -36,14 +32,14 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
-@auth.route('/login', methods=['POST'])
+@auth.route('/login/', methods=['POST'])
 def login_endpoint():
     '''
     Login a user
     '''
     form = LoginForm()
     if form.validate_on_submit():
-        username = form.username
+        username = form.username.data
         user = User.query.filter(
             (User.username == username) | (User.email == username)
         ).first()
@@ -54,11 +50,11 @@ def login_endpoint():
 
         login_user(user)
 
-        return jsonify(status='success', message='user logged out')
+        return jsonify(status='success', message='user logged in')
     return jsonify(status='error', message='invalid form input', errors=form.errors), 401
 
 
-@auth.route('/logout', methods=['POST'])
+@auth.route('/logout/', methods=['POST'])
 def logout():
     logout_user()
     return jsonify(status='success', message='user logged out')
