@@ -1,2 +1,2 @@
 export FLASK_APP="backend:create_app()"
-export DATABASE_URI="$HOME/testdb.sqlite"
+export DATABASE_URI="${HOME}/testdb.sqlite"
