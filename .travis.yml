@@ -10,4 +10,6 @@ install:
 script:
     - pyflakes backend
     - poetry run flask db upgrade
+    # test that schema changes are migrated
+    - poetry run flask db migrate 2>&1 > /dev/null | grep 'No changes in schema detected.'
     - poetry run python -m pytest
