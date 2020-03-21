@@ -1,2 +1,4 @@
 export FLASK_APP="backend:create_app()"
 export DATABASE_URI="sqlite:///${HOME}/testdb.sqlite"
+
+export SECRET_KEY="travis-secret"
