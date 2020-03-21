@@ -11,27 +11,32 @@ This is a python project using [`poetry`](https://python-poetry.org/docs/basic-u
 You'll need python ≥ 3.6.
 
 1. Get poetry:
-  ```
-  $ python install [--user] poetry
-  ```
+    ```
+    $ python install [--user] poetry
+    ```
 
 1. Copy the env-template and fill in the config
-  ```
-  $ cp env-template .env
-  ```
+    ```
+    $ cp env-template .env
+    ```
 
 1. Install dependencies
-  ```
-  $ poetry install
-  ```
+    ```
+    $ poetry install
+    ```
 
 1. Run database migrations
+    ```
+    $ poetry run flask db upgrade
+    ```
 
-  ```
-  $ poetry run flask db upgrade
-  ```
+1. Run the unit tests
+
+    ```
+    $ poetry run python -m pytest
+    ```
 
 1. Start app in debug mode
-  ```
-  FLASK_DEBUG=true poetry run flask run
-  ```
+    ```
+    FLASK_DEBUG=true poetry run flask run
+    ```
