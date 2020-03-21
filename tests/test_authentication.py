@@ -51,6 +51,8 @@ def test_login_required(app, client, user):
     from flask import Blueprint, jsonify
     from flask_login import login_required
 
+    # we create a small blueprint here that requires a login
+    # so we can test the login_required function works correctly
     bp = Blueprint('test', 'test')
 
     @bp.route('/test_login_required/')
