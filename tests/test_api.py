@@ -17,8 +17,9 @@ def shop(client):
 
 def test_shop_api(client, shop):
     ret = client.get('/api/shops')
-    test_store = ret.json[0]
+    test_store = ret.json['shops'][0]
     assert ret.status_code == 200
+    assert ret.json['status'] == 'success'
     assert test_store['name'] == 'My Awesome Supermarket'
     assert test_store['capacity'] == 50
     assert test_store['contact_info'] == 'Richard Feynman\nrichard@feynman.org\n+49123456789'
