@@ -1,7 +1,7 @@
-from flask import (jsonify, request, render_template, Blueprint)
-from flask_restful import Api, Resource, url_for
+from flask import (jsonify, Blueprint)
+from flask_restful import Api, Resource
 
-from ..models import db, Shop
+from ..models import Shop
 
 
 api_bp = Blueprint('api_bp', __name__)
