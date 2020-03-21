@@ -6,6 +6,8 @@ db = SQLAlchemy()
 
 class Shop(db.Model):
     ''' A shop '''
+    __tablename__ = 'shops'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.UnicodeText(), nullable=False)
     address = db.Column(db.UnicodeText(), nullable=False)
