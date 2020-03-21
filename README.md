@@ -1,4 +1,4 @@
-# Backend
+# Backend [![Build Status](https://travis-ci.com/wirvsvirus-dortmund/backend.svg?branch=master)](https://travis-ci.com/wirvsvirus-dortmund/backend)
 
 Backend for the shop status and appointment service using flask and sqlalchemy
 
