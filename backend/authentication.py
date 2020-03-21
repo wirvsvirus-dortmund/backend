@@ -1,4 +1,10 @@
-from flask_login import LoginManager, login_user, logout_user
+from functools import wraps
+
+from flask_login import (
+    LoginManager,
+    login_user, logout_user,
+    login_required, current_user,
+)
 from flask import jsonify, Blueprint
 
 from flask_wtf import FlaskForm
@@ -11,6 +17,30 @@ from .models import User
 
 auth = Blueprint('auth', __name__)
 login = LoginManager()
+
+
+def role_required(role_name):
+    '''
+    Check if current_user has a role named `role_name`.
+    Abort request with 401, if that's not the case.
+
+    Usage:
+        Decorate view function (`app.route(...)`) with this decorator and
+        specify a name of a role.
+        The name will be compared to all roles of the current_user.
+    '''
+    def access_decorator(func):
+        @wraps(func)
+        @login_required  # first of all a use needs to be logged in
+        def decorated_function(*args, **kwargs):
+            if not current_user.has_role(role_name):
+                return jsonify(
+                    status='access_denied',
+                    message=f'user lacks required role "{role_name}"'
+                ), 401
+            return func(*args, **kwargs)
+        return decorated_function
+    return access_decorator
 
 
 @login.user_loader
