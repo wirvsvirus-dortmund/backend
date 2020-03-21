@@ -1,5 +1,5 @@
 from flask import Blueprint
-from flask_restful import Api, Resource, abort, reqparse, fields, marshal
+from flask_restful import Api, Resource, abort, reqparse
 import dateutil.parser
 
 from ..models import db, Shop, CustomerDatapoint
