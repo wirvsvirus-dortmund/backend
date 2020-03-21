@@ -19,7 +19,7 @@ def user(client):
     return u
 
 
-def test_user(user):
+def test_check_password(user):
     assert not user.check_password('foo')
     assert user.check_password(PASSWORD)
 
