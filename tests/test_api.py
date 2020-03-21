@@ -1,4 +1,6 @@
 import pytest
+from datetime import datetime
+
 
 @pytest.fixture(scope='module')
 def shop(client):
@@ -24,3 +26,35 @@ def test_shop_api(client, shop):
     assert test_store['capacity'] == 50
     assert test_store['contact_info'] == 'Richard Feynman\nrichard@feynman.org\n+49123456789'
     assert test_store['address'] == '1234 Fermi Street\n56789 Los Alamos\nUSA'
+
+
+def test_customers_api(client, shop):
+    # non existing shop
+    ret = client.get('/api/shops/150/customers')
+    assert ret.status_code == 404
+
+    ret = client.get(f'/api/shops/{shop.id}/customers')
+    assert ret.status_code == 200
+    assert ret.json['status'] == 'success'
+    # no data yet
+    assert len(ret.json['customers']) == 0
+
+    ts = datetime.now().isoformat()
+    # add data
+    ret = client.post(f'/api/shops/{shop.id}/customers', data={
+        'timestamp': ts,
+        'customers_inside': 50,
+        'queue_size': 10,
+    })
+    assert ret.status_code == 201
+
+    ret = client.get(f'/api/shops/{shop.id}/customers')
+    assert ret.status_code == 200
+    assert ret.json['status'] == 'success'
+
+    assert len(ret.json['customers']) == 1
+    data = ret.json['customers'][0]
+    assert data['id'] == 1
+    assert data['timestamp'] == ts
+    assert data['customers_inside'] == 50
+    assert data['queue_size'] == 10

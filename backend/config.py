@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from .json_encoder import JSONEncoder
 
 load_dotenv()
 
@@ -17,3 +18,6 @@ class Config:
 
     # secret key is needed for sessions and tokens
     SECRET_KEY = os.environ['SECRET_KEY']
+
+    # use our own jsonencoder that can handle dates with flask_restful
+    RESTFUL_JSON = {'cls': JSONEncoder}
