@@ -1,0 +1,64 @@
+from flask_login import LoginManager, login_user, logout_user
+from flask import jsonify, request, abort, redirect, url_for, flash, Blueprint
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired
+
+
+from .models import User
+
+
+auth = Blueprint('auth', __name__)
+login = LoginManager()
+
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
+
+@login.unauthorized_handler
+def handle_needs_login():
+    if 'application/json' in request.headers.get('Accept'):
+        return jsonify(status='access_denied'), 401
+
+    if request.headers.get('Authorization') is not None:
+        abort(401)
+
+    flash("You have to be logged in to access this page.", category='danger')
+    return redirect(url_for('main.login_page', next=request.full_path))
+
+
+class LoginForm(FlaskForm):
+    username = StringField('Nutzername/Email', validators=[DataRequired()])
+    password = PasswordField('Passwort', validators=[DataRequired()])
+    submit = SubmitField('Login')
+
+
+@auth.route('/login', methods=['POST'])
+def login_endpoint():
+    '''
+    Login a user
+    '''
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username
+        user = User.query.filter(
+            (User.username == username) | (User.email == username)
+        ).first()
+
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid user or password', 'danger')
+            return jsonify(status='error', message='invalid user or password'), 401
+
+        login_user(user)
+
+        return jsonify(status='success', message='user logged out')
+    return jsonify(status='error', message='invalid form input', errors=form.errors), 401
+
+
+@auth.route('/logout', methods=['POST'])
+def logout():
+    logout_user()
+    return jsonify(status='success', message='user logged out')
