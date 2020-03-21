@@ -17,9 +17,7 @@ def as_dict(instance):
 class Shops(Resource):
     def get(self):
         all_saved_shops = [as_dict(shop) for shop in Shop.query.all()]
-        if all_saved_shops:
-            return jsonify(all_saved_shops)
-        else:
-            return "Currently we haven't stored any shops in our database."
+        return jsonify(status='success', shops=all_saved_shops)
+
 
 api.add_resource(Shops, '/shops')
