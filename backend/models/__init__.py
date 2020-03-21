@@ -29,7 +29,7 @@ class CustomerDatapoint(db.Model):
     '''
     id = db.Column(db.Integer, primary_key=True)
     shop_id = db.Column(db.Integer, db.ForeignKey(Shop.id))
-    timestamp = db.Column(db.DateTime(timezone=True))
+    timestamp = db.Column(db.TIMESTAMP(timezone=True))
     customers_inside = db.Column(db.Integer)
     queue_size = db.Column(db.Integer)
 
