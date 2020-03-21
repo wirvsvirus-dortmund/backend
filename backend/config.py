@@ -14,3 +14,6 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URI']
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # make deprecation warning go away
+
+    # secret key is needed for sessions and tokens
+    SECRET_KEY = os.environ['SECRET_KEY']
