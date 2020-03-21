@@ -1,5 +1,5 @@
 from flask_login import LoginManager, login_user, logout_user
-from flask import jsonify, abort, redirect, url_for, flash, Blueprint
+from flask import jsonify, Blueprint
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -45,7 +45,6 @@ def login_endpoint():
         ).first()
 
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid user or password', 'danger')
             return jsonify(status='error', message='invalid user or password'), 401
 
         login_user(user)
