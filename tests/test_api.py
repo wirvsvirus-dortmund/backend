@@ -32,6 +32,7 @@ def test_customers_api(client, shop):
     # non existing shop
     ret = client.get('/api/shops/150/customers')
     assert ret.status_code == 404
+    assert ret.json['message'] == 'Shop with id 150 does not exist'
 
     ret = client.get(f'/api/shops/{shop.id}/customers')
     assert ret.status_code == 200

@@ -40,3 +40,13 @@ You'll need python ≥ 3.6.
     ```
     FLASK_DEBUG=true poetry run flask run
     ```
+
+1. You can add some random data to the database using
+    ```
+    $ poetry run python examples/fill_some_data.py
+    ```
+
+1. httpie is a great http cli, e.g. you can look at the customer data for a shop:
+    ```
+    http :5000/api/shops/1/customers
+    ```
