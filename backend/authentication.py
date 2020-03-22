@@ -8,7 +8,7 @@ from flask_login import (
 from flask import jsonify, Blueprint
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired
 
 
@@ -59,6 +59,7 @@ def handle_needs_login():
 class LoginForm(FlaskForm):
     username = StringField('Nutzername/Email', validators=[DataRequired()])
     password = PasswordField('Passwort', validators=[DataRequired()])
+    remember_me = BooleanField('Eingeloggt bleiben?')
     submit = SubmitField('Login')
 
 
@@ -77,7 +78,7 @@ def login_endpoint():
         if user is None or not user.check_password(form.password.data):
             return jsonify(status='error', message='invalid user or password'), 401
 
-        login_user(user)
+        login_user(user, remember=form.remember_me.data)
 
         return jsonify(status='success', message='user logged in')
     return jsonify(status='error', message='invalid form input', errors=form.errors), 401
