@@ -17,6 +17,8 @@ wtforms = "^2.2.1"
 python-dateutil = "^2.8.1"
 flask_mail = "^0.9.1"
 backoff = "^1.10.0"
+psycopg2 = {version = "^2.8.4", optional = true}
+gunicorn = {version = "^20.0.4", optional = true}
 
 
 [tool.poetry.dev-dependencies]
@@ -24,6 +26,11 @@ pytest = "^5.2"
 pycodestyle = "^2.5.0"
 pyflakes = "^2.1.1"
 httpie = "^2.0.0"
+
+
+[tool.poetry.extras]
+pgsql = ["psycopg2"]
+deploy = ["psycopg2", "gunicorn"]
 
 [build-system]
 requires = ["poetry>=0.12"]
