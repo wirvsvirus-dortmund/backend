@@ -19,6 +19,12 @@ auth = Blueprint('auth', __name__)
 login = LoginManager()
 
 
+def json_abort(status_code, **kwargs):
+    '''Abort current session with `status_code` and send a json response as
+    object containing `**kwargs`'''
+    return abort(make_response(jsonify(**kwargs), status_code))
+
+
 def role_required(role_name):
     '''
     Check if current_user has a role named `role_name`.
@@ -34,9 +40,7 @@ def role_required(role_name):
         @login_required  # first of all a use needs to be logged in
         def decorated_function(*args, **kwargs):
             if not current_user.has_role(role_name):
-                return abort(make_response(jsonify(
-                    message=f'user lacks required role "{role_name}"'
-                ), 401))
+                return json_abort(401, message='missing_role', role=role_name)
             return func(*args, **kwargs)
         return decorated_function
     return access_decorator
@@ -49,9 +53,7 @@ def load_user(id):
 
 @login.unauthorized_handler
 def handle_needs_login():
-    return abort(make_response(jsonify(
-        message='You need to login to access this page'
-    ), 401))
+    return json_abort(401, message='login_required')
 
 
 class LoginForm(FlaskForm):
@@ -73,15 +75,18 @@ def login_endpoint():
         ).first()
 
         if user is None or not user.check_password(form.password.data):
-            return jsonify(status='error', message='invalid user or password'), 401
+            return json_abort(401, message='invalid_credentials')
+
+        if not user.email_confirmed:
+            json_abort(401, message='unconfirmed_email')
 
         login_user(user)
 
-        return jsonify(status='success', message='user logged in')
-    return jsonify(status='error', message='invalid form input', errors=form.errors), 401
+        return jsonify(message='user_logged_in')
+    return json_abort(401, message='invalid_input', errors=form.errors)
 
 
 @auth.route('/logout/', methods=['POST'])
 def logout():
     logout_user()
-    return jsonify(status='success', message='user logged out')
+    return jsonify(message='user_logged_out')
