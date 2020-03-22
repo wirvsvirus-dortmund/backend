@@ -56,7 +56,8 @@ def test_login_logout(client, user):
     # with remember_me, we should have two cookies
     assert len(client.cookie_jar) == 2
 
-    ret = client.post('/api/logout/')
+    # logout user so the other tests have clean state
+    client.post('/api/logout/')
 
 
 def test_login_required(app, client, user):
