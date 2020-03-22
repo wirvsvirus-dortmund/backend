@@ -27,32 +27,40 @@ def test_check_password(user):
 
 
 def test_login_logout(client, user):
+    from backend.models import db
+    # unconfirmed email
     ret = client.post('/api/login/', data=LOGIN_DATA)
+    assert ret.status_code == 401
+    assert ret.json['message'] == 'unconfirmed_email'
 
+    user.email_confirmed = True
+    db.session.add(user)
+    db.session.commit()
+
+    # now it should work
+    ret = client.post('/api/login/', data=LOGIN_DATA)
     assert ret.status_code == 200
-    assert ret.json['status'] == 'success'
-    assert ret.json['message'] == 'user logged in'
+    assert ret.json['message'] == 'user_logged_in'
     # only the session cookie should be there if we don't use remember_me
     assert len(client.cookie_jar) == 1
 
     ret = client.post('/api/logout/')
     assert ret.status_code == 200
-    assert ret.json['status'] == 'success'
-    assert ret.json['message'] == 'user logged out'
+    assert ret.json['message'] == 'user_logged_out'
 
     ret = client.post(
         '/api/login/',
         data={'username': user.username, 'password': 'foo'}
     )
     assert ret.status_code == 401
-    assert ret.json['status'] == 'error'
-    assert ret.json['message'] == 'invalid user or password'
+    assert ret.json['message'] == 'invalid_credentials'
 
     ret = client.post('/api/logout/')
     assert ret.status_code == 200
 
     ret = client.post('/api/login/', data={**LOGIN_DATA, 'remember_me': True})
     assert ret.status_code == 200
+    assert ret.json['message'] == 'user_logged_in'
     # with remember_me, we should have two cookies
     assert len(client.cookie_jar) == 2
 
@@ -107,7 +115,8 @@ def test_roles(app, client, user):
     # test request fails when user does not have needed role
     r = client.get('/test_role_required/')
     assert r.status_code == 401
-    assert r.json['message'] == 'user lacks required role "test_role"'
+    assert r.json['message'] == 'missing_role'
+    assert r.json['role'] == 'test_role'
 
     # test user can request the endpoint no that he/she has the role
     role = Role(name='test_role')
