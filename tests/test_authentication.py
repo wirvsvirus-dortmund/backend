@@ -27,19 +27,19 @@ def test_check_password(user):
 
 
 def test_login_logout(client, user):
-    ret = client.post('/login/', data=LOGIN_DATA)
+    ret = client.post('/api/login/', data=LOGIN_DATA)
 
     assert ret.status_code == 200
     assert ret.json['status'] == 'success'
     assert ret.json['message'] == 'user logged in'
 
-    ret = client.post('/logout/')
+    ret = client.post('/api/logout/')
     assert ret.status_code == 200
     assert ret.json['status'] == 'success'
     assert ret.json['message'] == 'user logged out'
 
     ret = client.post(
-        '/login/',
+        '/api/login/',
         data={'username': user.username, 'password': 'foo'}
     )
     assert ret.status_code == 401
@@ -66,7 +66,7 @@ def test_login_required(app, client, user):
     assert ret.status_code == 401
     assert ret.json['status'] == 'access_denied'
 
-    client.post('/login/', data=LOGIN_DATA)
+    client.post('/api/login/', data=LOGIN_DATA)
 
     ret = client.get('/test_login_required/')
     assert ret.status_code == 200
@@ -89,7 +89,7 @@ def test_roles(app, client, user):
 
     app.register_blueprint(bp)
 
-    r = client.post('/login/', data=LOGIN_DATA)
+    r = client.post('/api/login/', data=LOGIN_DATA)
     assert r.status_code == 200
 
     # test request fails when user does not have needed role
