@@ -1,6 +1,4 @@
-# create a build stage
-# see https://stackoverflow.com/a/54763270/3838691
-FROM python:3.8-slim AS BUILDER
+FROM python:3.8-slim
 
 # we always want to serve the member_database app
 ENV FLASK_APP=backend \
@@ -9,10 +7,11 @@ ENV FLASK_APP=backend \
 	PIP_DISABLE_PIP_VERSION_CHECK=1 \
 	PYTHONUNBUFFERED=1
 
-# everything should run as the memberdb user (not root, best practice)
+# everything should run as the supermarkt user (not root, best practice)
 RUN useradd --system --user-group supermarkt
 
 # we need the pg_dump executable for auto backups
+# and libpq-dev and gcc to compile psycopg
 RUN apt-get update && apt-get install -y  libpq-dev gcc postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
