@@ -1,6 +1,6 @@
 FROM python:3.8-slim
 
-# we always want to serve the member_database app
+# we always want to serve the backend app
 ENV FLASK_APP=backend \
 	PORT=5000 \
 	PIP_NO_CACHE_DIR=1 \
