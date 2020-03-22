@@ -2,10 +2,11 @@ from flask import Flask
 from flask_migrate import Migrate
 
 from .config import Config
-from .models import db
 from .api import api
 from .authentication import login, auth
 from .json_encoder import JSONEncoder
+from .mail import mail
+from .models import db
 
 
 def create_app(config=Config):
@@ -20,6 +21,7 @@ def create_app(config=Config):
     # init flask extensions
     db.init_app(app)
     login.init_app(app)
+    mail.init_app(app)
     Migrate(app, db)
 
     def internal_error(error):
