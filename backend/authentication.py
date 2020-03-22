@@ -20,6 +20,8 @@ login = LoginManager()
 
 
 def json_abort(status_code, **kwargs):
+    '''Abort current session with `status_code` and send a json response as
+    object containing `**kwargs`'''
     return abort(make_response(jsonify(**kwargs), status_code))
 
 
