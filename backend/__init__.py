@@ -23,7 +23,7 @@ def create_app(config=Config):
     Migrate(app, db)
 
     # register blueprints
-    app.register_blueprint(auth)
+    app.register_blueprint(auth, url_prefix='/api')
     app.register_blueprint(api.blueprint, url_prefix='/api')
 
     return app
