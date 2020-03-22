@@ -8,7 +8,7 @@ from flask_login import (
 from flask import jsonify, Blueprint, abort, make_response
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired
 
 
@@ -59,6 +59,7 @@ def handle_needs_login():
 class LoginForm(FlaskForm):
     username = StringField('Nutzername/Email', validators=[DataRequired()])
     password = PasswordField('Passwort', validators=[DataRequired()])
+    remember_me = BooleanField('Eingeloggt bleiben?')
     submit = SubmitField('Login')
 
 
@@ -80,7 +81,7 @@ def login_endpoint():
         if not user.email_confirmed:
             json_abort(401, message='unconfirmed_email')
 
-        login_user(user)
+        login_user(user, remember=form.remember_me.data)
 
         return jsonify(message='user_logged_in')
     return json_abort(401, message='invalid_input', errors=form.errors)

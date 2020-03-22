@@ -1,5 +1,8 @@
 import os
+from datetime import timedelta
+
 from dotenv import load_dotenv
+
 from .json_encoder import JSONEncoder
 
 load_dotenv()
@@ -21,6 +24,9 @@ class Config:
 
     # use our own jsonencoder that can handle dates with flask_restful
     RESTFUL_JSON = {'cls': JSONEncoder}
+
+    # how long a login cookie stays valid
+    REMEMBER_COOKIE_DURATION = timedelta(days=10)
 
     # config for the email server so this app can send mails
     MAIL_SENDER = os.environ['MAIL_SENDER']

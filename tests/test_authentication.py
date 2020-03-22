@@ -41,6 +41,8 @@ def test_login_logout(client, user):
     ret = client.post('/api/login/', data=LOGIN_DATA)
     assert ret.status_code == 200
     assert ret.json['message'] == 'user_logged_in'
+    # only the session cookie should be there if we don't use remember_me
+    assert len(client.cookie_jar) == 1
 
     ret = client.post('/api/logout/')
     assert ret.status_code == 200
@@ -52,6 +54,18 @@ def test_login_logout(client, user):
     )
     assert ret.status_code == 401
     assert ret.json['message'] == 'invalid_credentials'
+
+    ret = client.post('/api/logout/')
+    assert ret.status_code == 200
+
+    ret = client.post('/api/login/', data={**LOGIN_DATA, 'remember_me': True})
+    assert ret.status_code == 200
+    assert ret.json['message'] == 'user_logged_in'
+    # with remember_me, we should have two cookies
+    assert len(client.cookie_jar) == 2
+
+    # logout user so the other tests have clean state
+    client.post('/api/logout/')
 
 
 def test_login_required(app, client, user):
