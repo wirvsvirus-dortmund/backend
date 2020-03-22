@@ -77,7 +77,6 @@ def test_login_required(app, client, user):
 
     ret = client.get('/test_login_required/')
     assert ret.status_code == 401
-    assert ret.json['status'] == 'access_denied'
 
     client.post('/api/login/', data=LOGIN_DATA)
 
@@ -108,7 +107,6 @@ def test_roles(app, client, user):
     # test request fails when user does not have needed role
     r = client.get('/test_role_required/')
     assert r.status_code == 401
-    assert r.json['status'] == 'access_denied'
     assert r.json['message'] == 'user lacks required role "test_role"'
 
     # test user can request the endpoint no that he/she has the role

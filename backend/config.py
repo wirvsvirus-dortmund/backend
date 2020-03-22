@@ -27,3 +27,14 @@ class Config:
 
     # how long a login cookie stays valid
     REMEMBER_COOKIE_DURATION = timedelta(days=10)
+
+    # config for the email server so this app can send mails
+    MAIL_SENDER = os.environ['MAIL_SENDER']
+    MAIL_SERVER = os.environ['MAIL_SERVER']
+    MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', '').lower() == 'true'
+    MAIL_USE_SSL = os.getenv('MAIL_USE_SSL', '').lower() == 'true'
+    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+    if MAIL_USERNAME is not None and MAIL_PASSWORD is None:
+        raise KeyError('MAIL_PASSWORD is required when MAIL_USERNAME is set')

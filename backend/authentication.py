@@ -5,7 +5,7 @@ from flask_login import (
     login_user, logout_user,
     login_required, current_user,
 )
-from flask import jsonify, Blueprint
+from flask import jsonify, Blueprint, abort, make_response
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
@@ -34,10 +34,9 @@ def role_required(role_name):
         @login_required  # first of all a use needs to be logged in
         def decorated_function(*args, **kwargs):
             if not current_user.has_role(role_name):
-                return jsonify(
-                    status='access_denied',
+                return abort(make_response(jsonify(
                     message=f'user lacks required role "{role_name}"'
-                ), 401
+                ), 401))
             return func(*args, **kwargs)
         return decorated_function
     return access_decorator
@@ -50,10 +49,9 @@ def load_user(id):
 
 @login.unauthorized_handler
 def handle_needs_login():
-    return jsonify(
-        status='access_denied',
+    return abort(make_response(jsonify(
         message='You need to login to access this page'
-    ), 401
+    ), 401))
 
 
 class LoginForm(FlaskForm):

@@ -16,6 +16,9 @@ class TestingConfig(Config):
     # Disable CSRF tokens in the Forms (only valid for testing purposes!)
     WTF_CSRF_ENABLED = False
 
+    # don't really send out mails during unit tests
+    MAIL_SUPPRESS_SEND = True
+
 
 @pytest.fixture(scope='session')
 def app():

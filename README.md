@@ -50,3 +50,8 @@ You'll need python ≥ 3.6.
     ```
     http :5000/api/shops/1/customers
     ```
+
+## Conflicts in poetry.lock
+
+When poetry.lock has conflicts, don't bother resolving them by hand.
+Delete the file and recreate it by running `poetry install`.

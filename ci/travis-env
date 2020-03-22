@@ -2,3 +2,5 @@ export FLASK_APP="backend:create_app()"
 export DATABASE_URI="sqlite:///${HOME}/testdb.sqlite"
 
 export SECRET_KEY="travis-secret"
+export MAIL_SENDER='test@travis-ci.org'
+export MAIL_SERVER=''
