@@ -3,7 +3,6 @@ from flask_restful import Api, Resource, abort, reqparse
 import dateutil.parser
 
 from ..models import db, Shop, CustomerDatapoint
-from ..authentication import login_required
 
 
 api_bp = Blueprint('api_bp', __name__)
@@ -46,7 +45,6 @@ class ShopListAPI(Resource):
     def get(self):
         return dict(status='success', shops=all_as_dict(Shop.query.all()))
 
-    @login_required
     def post(self):
         '''Adds a new shop'''
         args = self.parser.parse_args()
