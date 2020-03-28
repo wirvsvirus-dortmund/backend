@@ -91,3 +91,15 @@ def login_endpoint():
 def logout():
     logout_user()
     return jsonify(message='user_logged_out')
+
+
+@auth.route('/csrf_token/')
+def get_csrf_token():
+    form = LoginForm()
+    return jsonify(token=form.csrf_token.current_token)
+
+
+@auth.route('/current_user/')
+@login_required
+def get_current_user():
+    return current_user.as_dict()

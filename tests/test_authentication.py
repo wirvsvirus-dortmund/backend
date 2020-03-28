@@ -8,17 +8,30 @@ LOGIN_DATA = {'username': USERNAME, 'password': PASSWORD}
 
 @pytest.fixture(scope='module')
 def user(client):
-    from backend.models import User, db
+    from backend.models import User, db, Role
 
+    admin = Role(name='admin')
     u = User(
         username=USERNAME,
         email='test@example.org',
+        roles=[admin],
     )
     u.set_password(PASSWORD)
-    db.session.add(u)
+    db.session.add(u, admin)
     db.session.commit()
 
     return u
+
+
+def test_user_as_dict(user):
+    d = user.as_dict()
+    assert d == {
+        'id': 1,
+        'username': USERNAME,
+        'email': 'test@example.org',
+        'email_confirmed': False,
+        'roles': ['admin'],
+    }
 
 
 def test_check_password(user):
@@ -92,6 +105,9 @@ def test_login_required(app, client, user):
     assert ret.status_code == 200
     assert ret.json['status'] == 'success'
 
+    # logout user so the other tests have clean state
+    client.post('/api/logout/')
+
 
 def test_roles(app, client, user):
     # we create a small blueprint here that requires a login
@@ -130,3 +146,19 @@ def test_roles(app, client, user):
     r = client.get('/test_role_required/')
     assert r.status_code == 200
     assert r.json['status'] == 'success'
+
+    # logout user so the other tests have clean state
+    client.post('/api/logout/')
+
+
+def test_current_user(client, user):
+    assert client.get('/api/current_user/').status_code == 401
+    assert client.post('/api/login/', data=LOGIN_DATA).status_code == 200
+    r = client.get('/api/current_user/')
+    assert r.json == {
+        'username': USERNAME,
+        'email_confirmed': True,
+        'id': 1,
+        'email': 'test@example.org',
+        'roles': ['admin', 'test_role']
+    }

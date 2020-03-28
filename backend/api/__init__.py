@@ -13,17 +13,9 @@ def parse_date(s):
     return dateutil.parser.parse(s)
 
 
-def as_dict(instance):
-    ''' Transform a model instance into a dict '''
-    return {
-        c.name: getattr(instance, c.name)
-        for c in instance.__table__.columns
-    }
-
-
 def all_as_dict(query):
     '''Return a list of dicts for all rows in query'''
-    return [as_dict(row) for row in query]
+    return [row.as_dict() for row in query]
 
 
 def get_or_404(model, id_):
@@ -51,12 +43,12 @@ class ShopListAPI(Resource):
         new_shop = Shop(**args)
         db.session.add(new_shop)
         db.session.commit()
-        return dict(status='success', shop=as_dict(new_shop)), 201
+        return dict(status='success', shop=new_shop.as_dict()), 201
 
 
 class ShopAPI(Resource):
     def get(self, shop_id):
-        return as_dict(get_or_404(Shop, shop_id))
+        return get_or_404(Shop, shop_id).as_dict()
 
 
 class CustomersAPI(Resource):
@@ -77,7 +69,7 @@ class CustomersAPI(Resource):
         data = CustomerDatapoint(**args, shop_id=shop_id)
         db.session.add(data)
         db.session.commit()
-        return dict(status='success', data=as_dict(data)), 201
+        return dict(status='success', data=data.as_dict()), 201
 
 
 api.add_resource(ShopListAPI, '/shops')
