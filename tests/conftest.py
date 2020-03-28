@@ -18,6 +18,7 @@ class TestingConfig(Config):
 
     # don't really send out mails during unit tests
     MAIL_SUPPRESS_SEND = True
+    MAIL_SENDER = 'Supermarkt <supermarkt@test.org>'
 
 
 @pytest.fixture(scope='session')
