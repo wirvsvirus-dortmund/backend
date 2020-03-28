@@ -93,6 +93,12 @@ def logout():
     return jsonify(message='user_logged_out')
 
 
+@auth.route('/csrf_token/')
+def get_csrf_token():
+    form = LoginForm()
+    return jsonify(token=form.csrf_token.current_token)
+
+
 @auth.route('/current_user/')
 @login_required
 def get_current_user():
