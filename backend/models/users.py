@@ -70,5 +70,11 @@ class User(db.Model, UserMixin):
                 return True
         return False
 
+    def as_dict(self):
+        d = super().as_dict()
+        del d['password_hash']
+        d['roles'] = [r.name for r in self.roles]
+        return d
+
     def __repr__(self):
         return f'<User {self.id}: {self.username}>'
