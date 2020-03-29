@@ -7,14 +7,14 @@ authors = ["Maximilian Nöthe <maximilian.noethe@tu-dortmund.de>"]
 [tool.poetry.dependencies]
 python = "^3.7"  # datetime.fromisoformat got introduced in 3.7
 flask = "^1.1.1"
-flask_sqlalchemy = "^2.4.1"
-python-dotenv = "^0.12.0"
+flask_login = "^0.5.0"
+flask_mail = "^0.9.1"
 flask_migrate = "^2.5.3"
 flask_restful = "^0.3.8"
-flask_login = "^0.5.0"
+flask_sqlalchemy = "^2.4.1"
 flask_wtf = "^0.14.3"
+python-dotenv = "^0.12.0"
 wtforms = "^2.2.1"
-flask_mail = "^0.9.1"
 backoff = "^1.10.0"
 psycopg2 = {version = "^2.8.4", optional = true}
 gunicorn = {version = "^20.0.4", optional = true}
@@ -22,8 +22,6 @@ gunicorn = {version = "^20.0.4", optional = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
-pycodestyle = "^2.5.0"
-pyflakes = "^2.1.1"
 httpie = "^2.0.0"
 flake8 = "^3.7.9"
 ipython = "^7.13.0"

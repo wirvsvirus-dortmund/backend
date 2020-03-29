@@ -724,7 +724,7 @@ deploy = ["psycopg2", "gunicorn"]
 pgsql = ["psycopg2"]
 
 [metadata]
-content-hash = "d4557090e1162c58a86016d4986d952653f39e40383fb076a39277d8f1b03e8a"
+content-hash = "0e7a9c5875a6381b9cfd675ede7637adab99e1de649ae87a995df50d79b64c90"
 python-versions = "^3.7"  # datetime.fromisoformat got introduced in 3.7
 
 [metadata.files]
