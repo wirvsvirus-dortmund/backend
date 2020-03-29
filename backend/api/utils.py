@@ -1,9 +1,4 @@
 from flask_restful import abort
-import dateutil.parser
-
-
-def parse_date(s):
-    return dateutil.parser.parse(s)
 
 
 def all_as_dict(query):
