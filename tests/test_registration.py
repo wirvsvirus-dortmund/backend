@@ -40,3 +40,12 @@ def test_registration(client):
         'email': 'enrico@fermi.org', 'password': 'half-spin'
     })
     assert r.status_code == 200
+
+    # registering with an existing email
+    ret = client.post('/api/users', data={
+        'name': 'Enrico Fermi',
+        'email': 'enrico@fermi.org',
+        'password': 'half-spin',
+    })
+    assert ret.status_code == 422
+    assert ret.json['message'] == 'email_taken'

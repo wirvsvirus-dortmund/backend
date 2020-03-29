@@ -6,7 +6,7 @@ from flask_login import (
     login_required, current_user,
 )
 from flask import (
-    jsonify, Blueprint, abort, make_response, current_app, redirect, render_template,
+    jsonify, Blueprint, abort, current_app, redirect, render_template,
 )
 from itsdangerous import URLSafeSerializer, BadData
 
@@ -18,16 +18,11 @@ from wtforms.validators import DataRequired
 
 from .models import User, db
 from .mail import send_email
+from .utils import json_abort
 
 
 auth = Blueprint('auth', __name__)
 login = LoginManager()
-
-
-def json_abort(status_code, **kwargs):
-    '''Abort current session with `status_code` and send a json response as
-    object containing `**kwargs`'''
-    return abort(make_response(jsonify(**kwargs), status_code))
 
 
 def role_required(role_name):

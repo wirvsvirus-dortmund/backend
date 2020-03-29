@@ -1,10 +1,11 @@
 from flask import render_template, current_app
 from flask_restful import Resource, reqparse
 from itsdangerous import URLSafeSerializer
+from sqlalchemy.exc import IntegrityError
 
 from ..models import db, User
 from ..mail import send_email
-from ..utils import ext_url_for
+from ..utils import ext_url_for, json_abort
 
 
 class UsersAPI(Resource):
@@ -21,7 +22,16 @@ class UsersAPI(Resource):
         new_user = User(**args)
         new_user.set_password(password)
         db.session.add(new_user)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except IntegrityError as e:
+            if 'UNIQUE constraint failed: users.email' in str(e):
+                json_abort(422, message='email_taken')
+            else:
+                raise
+        finally:
+            db.session.rollback()
 
         # send email verification link
         ts = URLSafeSerializer(current_app.config["SECRET_KEY"], salt='verify-email')
