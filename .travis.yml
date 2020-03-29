@@ -2,16 +2,33 @@
 language: python
 dist: bionic
 python:
-    - "3.7"
+  - "3.7"
+
+env:
+  global:
+    - SQLITE_URL=https://www.sqlite.org/2020/sqlite-autoconf-3310100.tar.gz
+    - SQLITE=$HOME/sqlite3
+    - LD_LIBRARY_PATH=$SQLITE/lib
+
+
+before_install:
+  # install a modern sqlite3 version
+  - mkdir -p $SQLITE/src
+  - curl -L $SQLITE_URL  | tar xz -C $SQLITE/src --strip-components=1
+  - cd $SQLITE/src
+  - ./configure --prefix $SQLITE
+  - make -j2 install
+  - cd $TRAVIS_BUILD_DIR
 
 install:
-    - pip install poetry
-    - poetry install
-    - cp ci/travis-env .env
+  - pip install poetry
+  - poetry install
+  - cp ci/travis-env .env
+  - poetry run python -c 'import sqlite3; print(sqlite3.sqlite_version)'
 
 script:
-    - pyflakes backend
-    - poetry run flask db upgrade
-    # test that schema changes are migrated
-    - poetry run flask db migrate 2>&1 > /dev/null | grep 'No changes in schema detected.'
-    - poetry run python -m pytest
+  - pyflakes backend
+  - poetry run flask db upgrade
+  # test that schema changes are migrated
+  - poetry run flask db migrate 2>&1 > /dev/null | grep 'No changes in schema detected.'
+  - poetry run python -m pytest
