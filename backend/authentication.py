@@ -5,24 +5,24 @@ from flask_login import (
     login_user, logout_user,
     login_required, current_user,
 )
-from flask import jsonify, Blueprint, abort, make_response
+from flask import (
+    jsonify, Blueprint, abort, current_app, redirect, render_template,
+)
+from itsdangerous import URLSafeSerializer, BadData
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import PasswordField, SubmitField, BooleanField
+from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 
 
-from .models import User
+from .models import User, db
+from .mail import send_email
+from .utils import json_abort
 
 
 auth = Blueprint('auth', __name__)
 login = LoginManager()
-
-
-def json_abort(status_code, **kwargs):
-    '''Abort current session with `status_code` and send a json response as
-    object containing `**kwargs`'''
-    return abort(make_response(jsonify(**kwargs), status_code))
 
 
 def role_required(role_name):
@@ -57,7 +57,7 @@ def handle_needs_login():
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Nutzername/Email', validators=[DataRequired()])
+    email = EmailField('Nutzername/Email', validators=[DataRequired()])
     password = PasswordField('Passwort', validators=[DataRequired()])
     remember_me = BooleanField('Eingeloggt bleiben?')
     submit = SubmitField('Login')
@@ -70,10 +70,8 @@ def login_endpoint():
     '''
     form = LoginForm()
     if form.validate_on_submit():
-        username = form.username.data
-        user = User.query.filter(
-            (User.username == username) | (User.email == username)
-        ).first()
+        email = form.email.data
+        user = User.query.filter(User.email == email).first()
 
         if user is None or not user.check_password(form.password.data):
             return json_abort(401, message='invalid_credentials')
@@ -87,7 +85,7 @@ def login_endpoint():
     return json_abort(401, message='invalid_input', errors=form.errors)
 
 
-@auth.route('/logout/', methods=['POST'])
+@auth.route('/logout/', methods=['POST', 'GET'])
 def logout():
     logout_user()
     return jsonify(message='user_logged_out')
@@ -103,3 +101,28 @@ def get_csrf_token():
 @login_required
 def get_current_user():
     return current_user.as_dict()
+
+
+@auth.route('/verify_email/<token>')
+def verify_email(token):
+    ts = URLSafeSerializer(
+        current_app.config["SECRET_KEY"],
+        salt='verify-email',
+    )
+    try:
+        user_id = ts.loads(token)
+    except BadData:
+        abort(404)
+
+    user = User.query.get_or_404(user_id)
+    user.email_confirmed = True
+    db.session.add(user)
+    db.session.commit()
+
+    send_email(
+        user.email,
+        'Supermarkt-Status Registrierung abgeschlossen',
+        render_template('confirmed.txt', name=user.name),
+    )
+
+    return redirect('/')

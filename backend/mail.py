@@ -38,7 +38,7 @@ def send_msg_async(msg):
                 raise
         log.info('Mail sent')
 
-    # See https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xv-a-better-application-structure
+    # noqa: See https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xv-a-better-application-structure
     # For an explanation of the current_app magic
     Thread(
         target=target,
@@ -46,7 +46,7 @@ def send_msg_async(msg):
     ).start()
 
 
-def send_email(sender, recipients, subject, body, **kwargs):
+def send_email(recipients, subject, body, **kwargs):
     '''
     Send an email async using a background thread
     '''
@@ -54,7 +54,12 @@ def send_email(sender, recipients, subject, body, **kwargs):
     if isinstance(recipients, str):
         recipients = [recipients]
 
-    msg = Message(subject=subject, sender=sender, recipients=recipients, **kwargs)
+    msg = Message(
+        subject=subject,
+        sender=current_app.config['MAIL_SENDER'],
+        recipients=recipients,
+        **kwargs
+    )
     msg.body = body
 
     # capturing mails does not work in another thread

@@ -1,6 +1,10 @@
 export FLASK_APP="backend:create_app()"
 export DATABASE_URI="sqlite:///db.sqlite"
 
+# Important for deployment so that generated links are correct
+export SERVER_NAME='localhost:8000'
+export USE_HTTPS=false
+
 # generate cryptographically secure random data, e.g. head -c 32 /dev/urandom | base64
 export SECRET_KEY="<key>"
 
@@ -8,7 +12,9 @@ export SECRET_KEY="<key>"
 export MAIL_SENDER='Supermarkt <info@supermarkt.org>'
 export MAIL_SERVER=''
 export MAIL_PORT=587
+# these two are mutually exclusive, only set one
 export MAIL_USE_TLS=true
-export MAIL_USE_SSL=true
+# export MAIL_USE_SSL=true
+
 export MAIL_USERNAME=''
 export MAIL_PASSWORD=''

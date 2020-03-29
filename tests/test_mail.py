@@ -3,7 +3,6 @@ def test_mails(app):
 
     with mail.record_messages() as outbox:
         send_email(
-            sender='noreply@supermarkt.org',
             recipients='test@example.org',
             subject='Test Email',
             body='Welcome to supermarkt.org',
@@ -15,4 +14,4 @@ def test_mails(app):
     assert email.body == 'Welcome to supermarkt.org'
     assert len(email.recipients) == 1
     assert 'test@example.org' in email.recipients
-    assert email.sender == 'noreply@supermarkt.org'
+    assert email.sender == 'Supermarkt <supermarkt@test.org>'
