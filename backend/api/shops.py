@@ -12,7 +12,7 @@ class ShopListAPI(Resource):
     parser.add_argument('contact_info', required=True)
 
     def get(self):
-        return dict(status='success', shops=all_as_dict(Shop.query.all()))
+        return dict(message='success', shops=all_as_dict(Shop.query.all()))
 
     def post(self):
         '''Adds a new shop'''
@@ -20,7 +20,7 @@ class ShopListAPI(Resource):
         new_shop = Shop(**args)
         db.session.add(new_shop)
         db.session.commit()
-        return dict(status='success', shop=new_shop.as_dict()), 201
+        return dict(message='success', shop=new_shop.as_dict()), 201
 
 
 class ShopAPI(Resource):
@@ -37,7 +37,7 @@ class ShopDataAPI(Resource):
     def get(self, shop_id):
         get_or_404(Shop, shop_id)
         data = all_as_dict(CustomerDatapoint.query.filter_by(shop_id=shop_id))
-        return dict(status='success', shop_id=shop_id, customers=data)
+        return dict(message='success', shop_id=shop_id, customers=data)
 
     def post(self, shop_id):
         '''adds a new data point to the customer timeseries'''
@@ -46,4 +46,4 @@ class ShopDataAPI(Resource):
         data = CustomerDatapoint(**args, shop_id=shop_id)
         db.session.add(data)
         db.session.commit()
-        return dict(status='success', data=data.as_dict()), 201
+        return dict(message='success', data=data.as_dict()), 201
