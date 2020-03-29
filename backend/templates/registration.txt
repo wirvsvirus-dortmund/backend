@@ -1,0 +1,12 @@
+Hallo {{ name }},
+
+Herzlich Wilkommen bei Supermarkt-Status
+
+Zum Abschließen ihrer Registrierung bestätigen Sie bitte ihre Email-Adresse
+indem sie auf diesen Link klicken:
+
+{{ validation_link }}
+
+
+Mit freundlichen Grüßen
+Ihr Supermarkt-Status Team

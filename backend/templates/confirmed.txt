@@ -1,0 +1,6 @@
+Hallo {{ name }},
+
+Ihre Registrierung ist nun erfolgreich abgeschlossen.
+
+Mit freundlichen Grüßen
+Ihr Supermarkt-Status Team

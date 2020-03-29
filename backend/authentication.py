@@ -5,7 +5,9 @@ from flask_login import (
     login_user, logout_user,
     login_required, current_user,
 )
-from flask import jsonify, Blueprint, abort, make_response, current_app
+from flask import (
+    jsonify, Blueprint, abort, make_response, current_app, redirect, render_template,
+)
 from itsdangerous import URLSafeSerializer, BadData
 
 from flask_wtf import FlaskForm
@@ -14,7 +16,8 @@ from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 
 
-from .models import User
+from .models import User, db
+from .mail import send_email
 
 
 auth = Blueprint('auth', __name__)
@@ -87,7 +90,7 @@ def login_endpoint():
     return json_abort(401, message='invalid_input', errors=form.errors)
 
 
-@auth.route('/logout/', methods=['POST'])
+@auth.route('/logout/', methods=['POST', 'GET'])
 def logout():
     logout_user()
     return jsonify(message='user_logged_out')
@@ -103,3 +106,28 @@ def get_csrf_token():
 @login_required
 def get_current_user():
     return current_user.as_dict()
+
+
+@auth.route('/verify_email/<token>')
+def verify_email(token):
+    ts = URLSafeSerializer(
+        current_app.config["SECRET_KEY"],
+        salt='verify-email',
+    )
+    try:
+        user_id = ts.loads(token)
+    except BadData:
+        abort(404)
+
+    user = User.query.get_or_404(user_id)
+    user.email_confirmed = True
+    db.session.add(user)
+    db.session.commit()
+
+    send_email(
+        user.email,
+        'Supermarkt-Status Registrierung abgeschlossen',
+        render_template('confirmed.txt', name=user.name),
+    )
+
+    return redirect('/')
