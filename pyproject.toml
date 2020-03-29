@@ -5,7 +5,7 @@ description = ""
 authors = ["Maximilian Nöthe <maximilian.noethe@tu-dortmund.de>"]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"  # datetime.fromisoformat got introduced in 3.7
 flask = "^1.1.1"
 flask_sqlalchemy = "^2.4.1"
 python-dotenv = "^0.12.0"
@@ -14,7 +14,6 @@ flask_restful = "^0.3.8"
 flask_login = "^0.5.0"
 flask_wtf = "^0.14.3"
 wtforms = "^2.2.1"
-python-dateutil = "^2.8.1"
 flask_mail = "^0.9.1"
 backoff = "^1.10.0"
 psycopg2 = {version = "^2.8.4", optional = true}

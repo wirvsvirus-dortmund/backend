@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from ..models import db, Shop, CustomerDatapoint
-from .utils import all_as_dict, get_or_404, parse_date
+from .utils import all_as_dict, get_or_404
+from datetime import datetime
 
 
 class ShopListAPI(Resource):
@@ -27,9 +28,9 @@ class ShopAPI(Resource):
         return get_or_404(Shop, shop_id).as_dict()
 
 
-class CustomersAPI(Resource):
+class ShopDataAPI(Resource):
     parser = reqparse.RequestParser(bundle_errors=True)
-    parser.add_argument('timestamp', type=parse_date, required=True)
+    parser.add_argument('timestamp', type=datetime.fromisoformat, required=True)
     parser.add_argument('customers_inside', type=int, required=True)
     parser.add_argument('queue_size', type=int, required=True)
 

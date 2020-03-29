@@ -28,13 +28,13 @@ def test_shop_api(client, shop):
     assert test_store['address'] == '1234 Fermi Street\n56789 Los Alamos\nUSA'
 
 
-def test_customers_api(client, shop):
+def test_shopdata_api(client, shop):
     # non existing shop
-    ret = client.get('/api/shops/150/customers')
+    ret = client.get('/api/shops/150/data')
     assert ret.status_code == 404
     assert ret.json['message'] == 'Shop with id 150 does not exist'
 
-    ret = client.get(f'/api/shops/{shop.id}/customers')
+    ret = client.get(f'/api/shops/{shop.id}/data')
     assert ret.status_code == 200
     assert ret.json['status'] == 'success'
     # no data yet
@@ -42,14 +42,14 @@ def test_customers_api(client, shop):
 
     ts = datetime.now().isoformat()
     # add data
-    ret = client.post(f'/api/shops/{shop.id}/customers', data={
+    ret = client.post(f'/api/shops/{shop.id}/data', data={
         'timestamp': ts,
         'customers_inside': 50,
         'queue_size': 10,
     })
     assert ret.status_code == 201
 
-    ret = client.get(f'/api/shops/{shop.id}/customers')
+    ret = client.get(f'/api/shops/{shop.id}/data')
     assert ret.status_code == 200
     assert ret.json['status'] == 'success'
 
