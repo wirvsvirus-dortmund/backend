@@ -68,6 +68,9 @@ def send_email(recipients, subject, body, **kwargs):
         mail.send(msg)
     # When debugging, just send it
     elif current_app.config['DEBUG'] is True:
+        print('Sender:     ', current_app.config['MAIL_SENDER'])
+        print('Recipients: ', recipients)
+        print('Subject:    ', subject)
         print(body)
     # if in production, use background thread
     else:
