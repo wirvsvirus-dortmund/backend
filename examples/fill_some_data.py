@@ -2,11 +2,26 @@ from backend import create_app
 from backend.models import db, User, Shop, CustomerDatapoint
 from datetime import datetime, timedelta
 import random
+from getpass import getpass
 
 
 with create_app().app_context():
-    u = User(username='rfeynman', email='richard@feynman.org')
-    u.set_password('los-alamos')
+    print('Creating user')
+    name = input('Name: ')
+    email = input('Email: ')
+
+    password = None
+    confirmed = False
+
+    while not confirmed:
+        password = getpass('Password: ')
+        confirm = getpass('Confirm Password: ')
+        confirmed = confirm == password
+        if not confirmed:
+            print('Passwords do not match')
+
+    u = User(name=name, email=email)
+    u.set_password(password)
     db.session.add(u)
 
     shop = Shop(

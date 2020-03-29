@@ -5,10 +5,12 @@ from flask_login import (
     login_user, logout_user,
     login_required, current_user,
 )
-from flask import jsonify, Blueprint, abort, make_response
+from flask import jsonify, Blueprint, abort, make_response, current_app
+from itsdangerous import URLSafeSerializer, BadData
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import PasswordField, SubmitField, BooleanField
+from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 
 
@@ -57,7 +59,7 @@ def handle_needs_login():
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Nutzername/Email', validators=[DataRequired()])
+    email = EmailField('Nutzername/Email', validators=[DataRequired()])
     password = PasswordField('Passwort', validators=[DataRequired()])
     remember_me = BooleanField('Eingeloggt bleiben?')
     submit = SubmitField('Login')
@@ -70,10 +72,8 @@ def login_endpoint():
     '''
     form = LoginForm()
     if form.validate_on_submit():
-        username = form.username.data
-        user = User.query.filter(
-            (User.username == username) | (User.email == username)
-        ).first()
+        email = form.email.data
+        user = User.query.filter(User.email == email).first()
 
         if user is None or not user.check_password(form.password.data):
             return json_abort(401, message='invalid_credentials')

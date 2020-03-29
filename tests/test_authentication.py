@@ -2,8 +2,8 @@ import pytest
 
 
 PASSWORD = 'very-good-password'
-USERNAME = 'test'
-LOGIN_DATA = {'username': USERNAME, 'password': PASSWORD}
+EMAIL = 'richard@feynman.org'
+LOGIN_DATA = {'email': EMAIL, 'password': PASSWORD}
 
 
 @pytest.fixture(scope='module')
@@ -12,8 +12,8 @@ def user(client):
 
     admin = Role(name='admin')
     u = User(
-        username=USERNAME,
-        email='test@example.org',
+        name='Richard Feynman',
+        email=EMAIL,
         roles=[admin],
     )
     u.set_password(PASSWORD)
@@ -27,11 +27,15 @@ def test_user_as_dict(user):
     d = user.as_dict()
     assert d == {
         'id': 1,
-        'username': USERNAME,
-        'email': 'test@example.org',
+        'name': 'Richard Feynman',
+        'email': EMAIL,
         'email_confirmed': False,
         'roles': ['admin'],
     }
+
+
+def test_user_repr(user):
+    assert repr(user) == f'<User 1: {EMAIL}>'
 
 
 def test_check_password(user):
@@ -61,9 +65,17 @@ def test_login_logout(client, user):
     assert ret.status_code == 200
     assert ret.json['message'] == 'user_logged_out'
 
+    # non-existent user
     ret = client.post(
         '/api/login/',
-        data={'username': user.username, 'password': 'foo'}
+        data={'email': 'foo@bar.baz', 'password': 'foo'}
+    )
+    assert ret.status_code == 401
+
+    # existing user with wrong password
+    ret = client.post(
+        '/api/login/',
+        data={'email': user.email, 'password': 'foo'}
     )
     assert ret.status_code == 401
     assert ret.json['message'] == 'invalid_credentials'
@@ -156,9 +168,9 @@ def test_current_user(client, user):
     assert client.post('/api/login/', data=LOGIN_DATA).status_code == 200
     r = client.get('/api/current_user/')
     assert r.json == {
-        'username': USERNAME,
+        'name': 'Richard Feynman',
         'email_confirmed': True,
         'id': 1,
-        'email': 'test@example.org',
+        'email': EMAIL,
         'roles': ['admin', 'test_role']
     }
