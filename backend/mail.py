@@ -38,7 +38,7 @@ def send_msg_async(msg):
                 raise
         log.info('Mail sent')
 
-    # See https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xv-a-better-application-structure
+    # noqa: See https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xv-a-better-application-structure
     # For an explanation of the current_app magic
     Thread(
         target=target,
