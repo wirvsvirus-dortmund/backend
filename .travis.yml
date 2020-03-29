@@ -24,11 +24,11 @@ install:
   - pip install poetry
   - poetry install | tee poetry.log
   # check that the lock file is up to date
-  - "! grep 'Warning: The lock file is not up to date' poetry.log"
   - cp ci/travis-env .env
   - poetry run python -c 'import sqlite3; print(sqlite3.sqlite_version)'
 
 script:
+  - "! grep 'Warning: The lock file is not up to date' poetry.log"
   - flake8 backend
   - poetry run flask db upgrade
   # test that schema changes are migrated
